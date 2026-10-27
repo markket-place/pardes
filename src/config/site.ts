@@ -22,100 +22,95 @@ export interface FooterColumn {
 }
 
 export const siteConfig = {
-  /** Studio name. Used in the wordmark, metadata, JSON-LD and the footer. */
-  name: "Atelier Kō",
+  /** Studio name. */
+  name: "Pardes",
 
-  /** One-line positioning statement. Emitted as the Organization slogan. */
-  tagline: "Furniture, made by hand",
+  /** Brand positioning. */
+  tagline: "Art, tradition, and meaning for everyday life",
 
-  /** Default meta description for pages that do not set their own. */
   description:
-    "A small Swedish atelier crafting solid oak, ash and walnut furniture by hand. Made to order in Småland.",
+    "Discover art prints and thoughtfully designed Judaica inspired by Jewish tradition, Hebrew typography, and contemporary culture.",
 
-  /** Default <title> for pages that do not set their own. */
-  defaultTitle: "Atelier Kō — Hand-made furniture from the northern woods",
+  defaultTitle: "Pardes — Art, Tradition & Meaning",
 
-  /** Contact address, linked in the footer and on the studio page. */
-  email: "email@example.com",
+  /** Replace with the real customer support address. */
+  email: "pardes@markket.place",
 
-  /** Used for Organization JSON-LD. */
+  /** Update if you establish a public studio location. */
   location: {
-    region: "Småland",
-    country: "SE",
+    region: "California",
+    country: "US",
   },
 
-  /** Browser theme colour. Keep in step with `--canvas` in src/styles.css. */
-  themeColor: "#f4f4f2",
+  /** Keep in step with --canvas in src/styles.css. */
+  themeColor: "#f4f1e9",
 
-  /**
-   * Fallback social share card, served from public/. Used by any page that
-   * does not pass its own `image` — product pages pass their photography, so
-   * this covers the homepage, catalogue, studio, cart and 404.
-   */
   socialImage: {
     src: "/og-image.png",
     width: 1200,
     height: 630,
-    alt: "Atelier Kō — hand-carved furniture from the northern woods",
+    alt: "Pardes — art, tradition, and meaning",
   },
 
-  /** Primary navigation, in order. Also drives the mobile menu. */
   navigation: [
-    { label: "Index", href: "/" },
-    { label: "Catalogue", href: "/catalog" },
-    { label: "Studio", href: "/about" },
+    { label: "Home", href: "/" },
+    { label: "Shop", href: "/catalog" },
+    { label: "About", href: "/about" },
   ] satisfies NavItem[],
 
-  /** Short paragraph in the first footer column. */
   footerBlurb:
-    "A two-person workshop in Småland, Sweden. Solid oak, ash and walnut — cut, joined and finished by hand.",
+    "Art and objects inspired by Jewish tradition, Hebrew lettering, and the beauty of everyday life. Thoughtfully designed, made to be lived with.",
 
-  /** Footer link columns. Add or remove columns freely. */
   footerColumns: [
     {
-      heading: "Catalogue",
+      heading: "Shop",
       links: [
-        { label: "All pieces", href: "/catalog" },
-        { label: "The studio", href: "/about" },
+        { label: "All products", href: "/catalog" },
+        { label: "Art prints", href: "/catalog?category=prints" },
+        { label: "Apparel", href: "/catalog?category=apparel" },
         { label: "Your cart", href: "/cart" },
       ],
     },
     {
-      heading: "Enquiries",
+      heading: "Pardes",
       links: [
-        { label: "Custom orders", href: "/about#studio" },
-        { label: "Trade portal", href: "/about#studio" },
-        { label: "Studio visits", href: "/about#studio" },
+        { label: "Our story", href: "/about" },
+        { label: "Contact", href: "mailto:hello@pardes.markket.place" },
       ],
     },
     {
-      heading: "Elsewhere",
-      links: [{ label: "Instagram", href: "https://www.instagram.com/" }],
+      heading: "Follow along",
+      links: [
+        // { label: "Instagram", href: "https://www.instagram.com/" },
+      ],
     },
   ] satisfies FooterColumn[],
 
-  /** Commerce defaults. */
   commerce: {
-    /** BCP 47 locale used to format every price. */
+    /** BCP 47 locale used to format prices. */
     locale: "en-US",
     /** ISO 4217 currency code. */
     currency: "USD",
-    /** Flat delivery charge added once when the cart is not empty. */
-    shippingFlatRate: 120,
+
+    /**
+     * Placeholder only. Replace with the real shipping calculation
+     * before enabling production checkout.
+     */
+    shippingFlatRate: 0,
   },
 
   /**
-   * Which products the theme promotes. Each value is a filename in
-   * src/content/products without the .md extension. A slug that does not
-   * resolve fails the build rather than rendering an empty section.
+   * Temporary local-content slugs.
+   * Replace these with real product slugs when connecting Strapi.
    */
   featured: {
-    /** Three cards in the homepage "in the workshop" grid. */
-    homepageGrid: ["arvid-chair", "low-plinth-table", "tora-desk"],
-    /** The single large piece given its own homepage section. */
-    homepageSolo: "monolith-bench",
-    /** The piece shown at the foot of the mobile menu. */
-    mobileMenu: "oken-stool",
+    homepageGrid: [
+      "hebrew-art-print",
+      "shabbat-print",
+      "judaica-wall-art",
+    ],
+    homepageSolo: "featured-artwork",
+    mobileMenu: "bestseller-print",
   },
 } as const;
 

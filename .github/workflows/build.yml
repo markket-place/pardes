@@ -1,0 +1,80 @@
+name: Deploy to Pages
+
+on:
+  # Runs on pull requests
+  pull_request:
+    branches: ["main"]
+    types: [opened, synchronize, reopened]
+
+  push:
+    branches: ["main"]
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+# Basic permissions for testing
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+env:
+  BUILD_PATH: "." # default value when not using subfolders
+
+jobs:
+  test:
+    name: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+          cache: npm
+          cache-dependency-path: ${{ env.BUILD_PATH }}/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+        working-directory: ${{ env.BUILD_PATH }}
+
+      - name: Create environment file
+        run: |
+          echo "PUBLIC_STRAPI_URL=${{ secrets.PUBLIC_STRAPI_URL }}" >> .env
+          echo "PUBLIC_STORE_SLUG=${{ secrets.PUBLIC_STORE_SLUG }}" >> .env
+          echo "PUBLIC_POSTHOG_KEY=${{ secrets.PUBLIC_POSTHOG_KEY }}" >> .env
+          echo "PUBLIC_URL=https://sell.markket.place" >> .env
+        working-directory: ${{ env.BUILD_PATH }}
+
+      - name: Test Build with Astro
+        run: |
+          npm run build
+        working-directory: ${{ env.BUILD_PATH }}
+
+      - name: Test build output
+        run: |
+          if [ -d "dist" ]; then
+            echo "✅ Build successful - dist folder created"
+            ls -la dist/
+          else
+            echo "❌ Build failed - no dist folder found"
+            exit 1
+          fi
+        working-directory: ${{ env.BUILD_PATH }}
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v4
+        with:
+          path: ${{ env.BUILD_PATH }}/dist/
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    needs: test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4 # Pairs with upload-pages-artifact
