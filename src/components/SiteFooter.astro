@@ -7,7 +7,10 @@ const year = new Date().getFullYear();
 // one place rather than duplicated into the footer link list.
 const columns = siteConfig.footerColumns.map((column, index) =>
   index === siteConfig.footerColumns.length - 1
-    ? { ...column, links: [...column.links, { label: siteConfig.email, href: `mailto:${siteConfig.email}` }] }
+    ? {
+        ...column,
+        links: [...column.links, { label: siteConfig.email, href: `mailto:${siteConfig.email}` }],
+      }
     : column,
 );
 ---
@@ -30,8 +33,15 @@ const columns = siteConfig.footerColumns.map((column, index) =>
             placeholder="email@example.com"
           />
         </div>
-        <button type="submit" class="btn btn-primary mt-5 w-full" data-newsletter-button>Notify me</button>
-        <p class="mono mt-4 min-h-[1rem] text-[0.6875rem] text-accent" data-newsletter-status role="status"></p>
+        <button type="submit" class="btn btn-primary mt-5 w-full" data-newsletter-button>
+          Notify me
+        </button>
+        <p
+          class="mono mt-4 min-h-[1rem] text-[0.6875rem] text-accent"
+          data-newsletter-status
+          role="status"
+        >
+        </p>
       </form>
     </div>
   </section>
@@ -63,8 +73,9 @@ const columns = siteConfig.footerColumns.map((column, index) =>
     </div>
 
     <div class="mt-20 border-t border-line py-8">
-      <p class="mono text-[0.6875rem] uppercase tracking-[0.05em] text-muted">
-        © {year} {siteConfig.name} — all pieces made to order
+      <p class="mono text-[0.6875rem] uppercase tracking-[0.05em] text-muted" title="בסיעתא דשמיא">
+        © {year}
+        {siteConfig.name} — BS"D
       </p>
     </div>
   </div>

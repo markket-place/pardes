@@ -14,9 +14,10 @@ const { categories, materials } = getProductFilters(products);
 >
   <main id="main-content">
     <section class="shell pb-12 pt-12 md:pb-16 md:pt-20">
-      <h1 class="type-h1 hero-in max-w-[12ch]">Every piece, made to order</h1>
+      <h1 class="type-h1 hero-in max-w-[12ch]">Creative Services</h1>
       <p class="type-lead hero-in mt-8 max-w-[52ch]" style="--reveal-delay:120ms">
-        Six pieces, three materials. Filter to find what fits your room — then we begin by selecting the board.
+        Six pieces, three materials. Filter to find what fits your room — then we begin by selecting
+        the board.
       </p>
     </section>
 
@@ -26,11 +27,22 @@ const { categories, materials } = getProductFilters(products);
           <div class="space-y-5">
             <div data-filter-group="category">
               <p class="label mb-2.5" id="filter-category">Category</p>
-              <div class="flex flex-wrap items-center gap-2" role="group" aria-labelledby="filter-category">
-                <button class="chip" type="button" data-filter-value="all" aria-pressed="true">All pieces</button>
+              <div
+                class="flex flex-wrap items-center gap-2"
+                role="group"
+                aria-labelledby="filter-category"
+              >
+                <button class="chip" type="button" data-filter-value="all" aria-pressed="true">
+                  All pieces
+                </button>
                 {
                   categories.map((category) => (
-                    <button class="chip" type="button" data-filter-value={category} aria-pressed="false">
+                    <button
+                      class="chip"
+                      type="button"
+                      data-filter-value={category}
+                      aria-pressed="false"
+                    >
                       {category}
                     </button>
                   ))
@@ -40,11 +52,22 @@ const { categories, materials } = getProductFilters(products);
 
             <div data-filter-group="material">
               <p class="label mb-2.5" id="filter-material">Material</p>
-              <div class="flex flex-wrap items-center gap-2" role="group" aria-labelledby="filter-material">
-                <button class="chip" type="button" data-filter-value="all" aria-pressed="true">All materials</button>
+              <div
+                class="flex flex-wrap items-center gap-2"
+                role="group"
+                aria-labelledby="filter-material"
+              >
+                <button class="chip" type="button" data-filter-value="all" aria-pressed="true">
+                  All materials
+                </button>
                 {
                   materials.map((material) => (
-                    <button class="chip" type="button" data-filter-value={material} aria-pressed="false">
+                    <button
+                      class="chip"
+                      type="button"
+                      data-filter-value={material}
+                      aria-pressed="false"
+                    >
                       {material}
                     </button>
                   ))
@@ -55,7 +78,11 @@ const { categories, materials } = getProductFilters(products);
 
           <div class="shrink-0">
             <label class="label mb-2.5 block" for="catalog-sort">Sort by</label>
-            <select id="catalog-sort" class="field mono w-full text-[0.8125rem] lg:w-52" data-catalog-sort>
+            <select
+              id="catalog-sort"
+              class="field mono w-full text-[0.8125rem] lg:w-52"
+              data-catalog-sort
+            >
               <option value="featured">Featured</option>
               <option value="price-asc">Price — low to high</option>
               <option value="price-desc">Price — high to low</option>
@@ -64,10 +91,15 @@ const { categories, materials } = getProductFilters(products);
         </div>
       </section>
 
-      <p class="mono border-t border-line py-4 text-[0.6875rem] uppercase tracking-[0.05em] text-muted" aria-live="polite">
+      <p
+        class="mono border-t border-line py-4 text-[0.6875rem] uppercase tracking-[0.05em] text-muted"
+        aria-live="polite"
+      >
         <span data-catalog-count>{String(products.length).padStart(2, "0")}</span>&#32;<span
-          data-catalog-count-label>pieces</span
-        >&#32;shown
+          data-catalog-count-label
+        >
+          pieces
+        </span>&#32;shown
       </p>
 
       <p class="type-h3 hidden py-32 text-center text-muted" data-catalog-empty>

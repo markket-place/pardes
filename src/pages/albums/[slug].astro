@@ -1,0 +1,358 @@
+---
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import { getCollection } from "astro:content";
+
+const STRAPI_URL = import.meta.env.PUBLIC_STRAPI_URL;
+
+export async function getStaticPaths() {
+  const albums = await getCollection("albums");
+
+  return albums.map((entry) => ({
+    params: { slug: entry.data.slug },
+    props: { album: entry.data },
+  }));
+}
+
+interface Props {
+  album: Record<string, any>;
+}
+
+const { album } = Astro.props;
+
+// Resolve both absolute R2 URLs and relative Strapi URLs.
+function resolveUrl(path?: string) {
+  if (!path) return "";
+
+  try {
+    return new URL(path, STRAPI_URL || Astro.url.origin).href;
+  } catch {
+    return path;
+  }
+}
+
+// Support both Strapi v5 flattened relations and older
+// { data: [...] } relation responses.
+const rawMedia = album.media;
+
+const mediaItems = Array.isArray(rawMedia)
+  ? rawMedia
+  : Array.isArray(rawMedia?.data)
+    ? rawMedia.data
+    : [];
+
+const media = mediaItems
+  .map((entry: any) => {
+    const item = entry.attributes ? { id: entry.id, ...entry.attributes } : entry;
+
+    const formats = item.formats || {};
+
+    return {
+      id: item.id,
+      url: resolveUrl(item.url),
+      thumbnail: resolveUrl(
+        formats.medium?.url || formats.small?.url || formats.thumbnail?.url || item.url,
+      ),
+      alt: item.alternativeText || item.caption || item.name || album.title,
+      caption: item.caption || "",
+      mime: item.mime || "",
+    };
+  })
+  .filter((item: any) => item.url && item.mime.startsWith("image/"));
+
+const title = album.title || "Untitled Album";
+const description = album.description || "";
+
+const seo = album.seo || {};
+
+const pageDescription = seo.metaDescription || description.slice(0, 155);
+
+const socialImage = resolveUrl(
+  seo.socialImage?.url || seo.socialImage?.data?.attributes?.url || media[0]?.url,
+);
+
+const origin = Astro.site ?? new URL(Astro.url.origin);
+const albumUrl = new URL(`/albums/${album.slug}`, origin).href;
+
+const gallerySchema = {
+  "@context": "https://schema.org",
+  "@type": "ImageGallery",
+  name: title,
+  description,
+  url: albumUrl,
+  image: media.map((item: any) => item.url),
+};
+---
+
+<BaseLayout title={seo.metaTitle || title} description={pageDescription} image={socialImage}>
+  <main id="main-content" class="shell">
+    <!-- Breadcrumb -->
+    <nav
+      class="mono flex gap-2 py-6 text-[0.6875rem] uppercase tracking-[0.05em] text-muted"
+      aria-label="Breadcrumb"
+    >
+      <a href="/albums" class="link">Albums</a>
+      <span aria-hidden="true">/</span>
+      <span class="text-ink" aria-current="page">{title}</span>
+    </nav>
+
+    <!-- Album Header -->
+    <header class="border-t border-line pt-8 pb-12">
+      <div class="grid gap-8 lg:grid-cols-12 lg:items-end">
+        <div class="lg:col-span-8">
+          <p class="mono text-xs uppercase tracking-widest text-muted mb-4">Photography / Album</p>
+
+          <h1 class="type-h2 max-w-[18ch]">
+            {title}
+          </h1>
+        </div>
+
+        {
+          description && (
+            <div class="lg:col-span-4">
+              <p class="type-body max-w-[46ch] text-muted">{description}</p>
+            </div>
+          )
+        }
+      </div>
+
+      <div class="mono mt-8 text-xs text-muted">
+        {media.length} photographs
+      </div>
+    </header>
+
+    <!-- Masonry Gallery -->
+    <section class="columns-1 gap-6 sm:columns-2 lg:columns-3" aria-label={`${title} photographs`}>
+      {
+        media.map((item: any, index: number) => (
+          <figure class="group relative mb-6 break-inside-avoid overflow-hidden rounded-lg">
+            <button
+              type="button"
+              class="gallery-image block w-full cursor-zoom-in text-left"
+              data-lightbox-item
+              data-full-src={item.url}
+              data-alt={item.alt}
+              data-caption={item.caption}
+              aria-label={`View photograph ${index + 1}: ${item.alt}`}
+            >
+              <img
+                src={item.thumbnail}
+                alt={item.alt}
+                class="block h-auto w-full rounded-lg transition-transform duration-500 group-hover:scale-[1.02]"
+                loading={index < 3 ? "eager" : "lazy"}
+                decoding="async"
+              />
+
+              <span class="pointer-events-none absolute inset-0 flex items-center justify-center bg-black/0 opacity-0 transition-all duration-300 group-hover:bg-black/20 group-hover:opacity-100">
+                <span class="rounded-full bg-white/90 p-3 text-black shadow-lg">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="22"
+                    height="22"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="1.8"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  >
+                    <circle cx="11" cy="11" r="7" />
+                    <path d="m20 20-4-4" />
+                    <path d="M11 8v6M8 11h6" />
+                  </svg>
+                </span>
+              </span>
+            </button>
+
+            {item.caption && (
+              <figcaption class="mt-2 text-sm text-muted">{item.caption}</figcaption>
+            )}
+          </figure>
+        ))
+      }
+    </section>
+
+    {
+      media.length === 0 && (
+        <p class="py-16 text-center text-muted">No photographs are available in this album yet.</p>
+      )
+    }
+
+    <!-- Back to Albums -->
+    <!-- <div class="mt-20 border-t border-line pt-8 pb-16">
+      <a href="/albums" class="link link-mono text-sm">← Back to all albums</a>
+    </div> -->
+  </main>
+
+  <!-- Lightbox -->
+  <div
+    id="lightbox-modal"
+    class="fixed inset-0 z-50 hidden bg-black/95 backdrop-blur-sm"
+    aria-hidden="true"
+    role="dialog"
+    aria-modal="true"
+    aria-label="Photograph viewer"
+  >
+    <button
+      id="lightbox-close"
+      type="button"
+      class="absolute right-5 top-5 z-10 rounded-full bg-white/10 p-3 text-white hover:bg-white/20"
+      aria-label="Close photograph viewer"
+    >
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        width="24"
+        height="24"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      >
+        <path d="m18 6-12 12M6 6l12 12"></path>
+      </svg>
+    </button>
+
+    <button
+      id="lightbox-prev"
+      type="button"
+      class="absolute left-3 top-1/2 z-10 -translate-y-1/2 rounded-full bg-white/10 p-3 text-white hover:bg-white/20 md:left-6"
+      aria-label="Previous photograph"
+    >
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        width="24"
+        height="24"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+      >
+        <path d="m15 18-6-6 6-6"></path>
+      </svg>
+    </button>
+
+    <button
+      id="lightbox-next"
+      type="button"
+      class="absolute right-3 top-1/2 z-10 -translate-y-1/2 rounded-full bg-white/10 p-3 text-white hover:bg-white/20 md:right-6"
+      aria-label="Next photograph"
+    >
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        width="24"
+        height="24"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+      >
+        <path d="m9 18 6-6-6-6"></path>
+      </svg>
+    </button>
+
+    <div class="flex h-full flex-col items-center justify-center px-14 py-16 md:px-24">
+      <img id="lightbox-image" src="" alt="" class="max-h-[75vh] max-w-full object-contain" />
+
+      <div class="mt-5 flex w-full max-w-4xl items-center justify-between gap-4 text-white">
+        <div class="min-w-0">
+          <p id="lightbox-caption" class="truncate text-sm text-white/80"></p>
+          <p id="lightbox-counter" class="mono mt-1 text-xs text-white/50"></p>
+        </div>
+
+        <a
+          id="lightbox-download"
+          href="#"
+          download
+          class="shrink-0 rounded-full border border-white/30 px-4 py-2 text-xs uppercase tracking-wider hover:bg-white/10"
+        >
+          Download
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const modal = document.querySelector("#lightbox-modal");
+    const image = document.querySelector<HTMLImageElement>("#lightbox-image");
+    const caption = document.querySelector("#lightbox-caption");
+    const counter = document.querySelector("#lightbox-counter");
+    const closeButton = document.querySelector("#lightbox-close");
+    const prevButton = document.querySelector("#lightbox-prev");
+    const nextButton = document.querySelector("#lightbox-next");
+    const download = document.querySelector<HTMLAnchorElement>("#lightbox-download");
+
+    const items = Array.from(document.querySelectorAll<HTMLButtonElement>("[data-lightbox-item]"));
+
+    let currentIndex = 0;
+    let previousFocus: HTMLElement | null = null;
+
+    function showImage(index: number) {
+      if (!items.length || !modal || !image || !download) return;
+
+      currentIndex = (index + items.length) % items.length;
+
+      const item = items[currentIndex];
+      const src = item.dataset.fullSrc || "";
+      const alt = item.dataset.alt || "";
+      const text = item.dataset.caption || "";
+
+      image.src = src;
+      image.alt = alt;
+      download.href = src;
+
+      if (caption) caption.textContent = text;
+      if (counter) counter.textContent = `${currentIndex + 1} / ${items.length}`;
+
+      prevButton?.classList.toggle("hidden", items.length < 2);
+      nextButton?.classList.toggle("hidden", items.length < 2);
+    }
+
+    function openLightbox(index: number) {
+      if (!modal) return;
+
+      previousFocus = document.activeElement as HTMLElement;
+      showImage(index);
+
+      modal.classList.remove("hidden");
+      modal.setAttribute("aria-hidden", "false");
+      document.body.style.overflow = "hidden";
+
+      closeButton?.focus();
+    }
+
+    function closeLightbox() {
+      if (!modal) return;
+
+      modal.classList.add("hidden");
+      modal.setAttribute("aria-hidden", "true");
+      document.body.style.overflow = "";
+
+      if (image) image.src = "";
+
+      previousFocus?.focus();
+    }
+
+    items.forEach((item, index) => {
+      item.addEventListener("click", () => openLightbox(index));
+    });
+
+    closeButton?.addEventListener("click", closeLightbox);
+    prevButton?.addEventListener("click", () => showImage(currentIndex - 1));
+    nextButton?.addEventListener("click", () => showImage(currentIndex + 1));
+
+    modal?.addEventListener("click", (event) => {
+      if (event.target === modal) closeLightbox();
+    });
+
+    document.addEventListener("keydown", (event) => {
+      if (!modal || modal.classList.contains("hidden")) return;
+
+      if (event.key === "Escape") closeLightbox();
+      if (event.key === "ArrowLeft") showImage(currentIndex - 1);
+      if (event.key === "ArrowRight") showImage(currentIndex + 1);
+    });
+  </script>
+
+  <script is:inline type="application/ld+json" set:html={JSON.stringify(gallerySchema)} />
+</BaseLayout>

@@ -64,7 +64,10 @@ const breadcrumbSchema = {
   image={product.images[0]}
 >
   <main id="main-content" class="shell">
-    <nav class="mono flex gap-2 py-6 text-[0.6875rem] uppercase tracking-[0.05em] text-muted" aria-label="Breadcrumb">
+    <nav
+      class="mono flex gap-2 py-6 text-[0.6875rem] uppercase tracking-[0.05em] text-muted"
+      aria-label="Breadcrumb"
+    >
       <a href="/catalog" class="link">Catalogue</a>
       <span aria-hidden="true">/</span>
       <span class="text-ink" aria-current="page">{product.name}</span>
@@ -76,7 +79,10 @@ const breadcrumbSchema = {
         <div class="relative overflow-hidden bg-surface">
           {
             product.images.map((image, index) => (
-              <div class:list={["gallery-panel", index !== 0 && "is-hidden"]} data-gallery-panel={index}>
+              <div
+                class:list={["gallery-panel", index !== 0 && "is-hidden"]}
+                data-gallery-panel={index}
+              >
                 <Image
                   src={image}
                   alt={`${product.name} — view ${index + 1} of ${product.images.length}`}
@@ -137,32 +143,39 @@ const breadcrumbSchema = {
         </dl>
 
         <div class="mt-10 flex flex-wrap items-stretch gap-3">
-          <div class="qty" data-quantity>
-            <button type="button" data-quantity-decrease aria-label="Decrease quantity" disabled>−</button>
+          <!-- <div class="qty" data-quantity>
+            <button type="button" data-quantity-decrease aria-label="Decrease quantity" disabled>
+              −
+            </button>
             <output data-quantity-value aria-live="polite" aria-label="Quantity">1</output>
             <button type="button" data-quantity-increase aria-label="Increase quantity">+</button>
-          </div>
-          <button
+          </div> -->
+          <!-- <button
             type="button"
             class="btn btn-primary flex-1"
             data-add-to-cart={product.slug}
             data-add-quantity="1"
           >
             Add to cart
-          </button>
+          </button> -->
         </div>
 
-        <p class="mono mt-5 text-[0.6875rem] uppercase leading-relaxed tracking-[0.05em] text-muted">
-          Free white-glove delivery in the EU · worldwide on request
+        <p
+          class="mono mt-5 text-[0.6875rem] uppercase leading-relaxed tracking-[0.05em] text-muted"
+        >
+          Free white-glove delivery
         </p>
       </div>
     </div>
 
     {/* ------------------------------------------------------------- Related */}
     <section class="mt-32 md:mt-44">
-      <div class="flex flex-wrap items-end justify-between gap-x-8 gap-y-4 border-t border-line pt-8" data-reveal>
-        <h2 class="type-h2 max-w-[16ch]">Pieces that sit well together</h2>
-        <a href="/catalog" class="link link-mono pb-1.5 text-muted">All six pieces</a>
+      <div
+        class="flex flex-wrap items-end justify-between gap-x-8 gap-y-4 border-t border-line pt-8"
+        data-reveal
+      >
+        <h2 class="type-h2 max-w-[16ch]">Services that go well together</h2>
+        <a href="/catalog" class="link link-mono pb-1.5 text-muted">Creative Solutions</a>
       </div>
 
       <div class="mt-12 grid gap-x-8 gap-y-14 md:mt-14 md:grid-cols-3">
@@ -207,8 +220,8 @@ const breadcrumbSchema = {
     }
   </style>
 
-  <script is:inline type="application/ld+json" set:html={JSON.stringify(productSchema)}></script>
-  <script is:inline type="application/ld+json" set:html={JSON.stringify(breadcrumbSchema)}></script>
+  <script is:inline type="application/ld+json" set:html={JSON.stringify(productSchema)} />
+  <script is:inline type="application/ld+json" set:html={JSON.stringify(breadcrumbSchema)} />
 
   <script is:inline>
     (() => {
@@ -220,7 +233,9 @@ const breadcrumbSchema = {
         thumbs.forEach((thumb) => {
           thumb.addEventListener("click", () => {
             const active = thumb.dataset.galleryThumb;
-            panels.forEach((panel) => panel.classList.toggle("is-hidden", panel.dataset.galleryPanel !== active));
+            panels.forEach((panel) =>
+              panel.classList.toggle("is-hidden", panel.dataset.galleryPanel !== active),
+            );
             thumbs.forEach((button) => {
               button.setAttribute("aria-pressed", String(button === thumb));
             });
