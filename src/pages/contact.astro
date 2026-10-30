@@ -1,0 +1,93 @@
+---
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import { pageTitle } from "@/config/site";
+---
+
+<BaseLayout
+  title={pageTitle("Contact")}
+  description="Get in touch with Pardes Creative Studio in North Hollywood, Los Angeles. Let's create something together."
+>
+  <main id="main-content">
+
+    <section class="shell min-h-[75vh] flex items-center py-24 md:py-36">
+      <div class="w-full max-w-3xl mx-auto">
+
+        <p class="text-xs tracking-[0.3em] uppercase text-accent mb-8">
+          Start a conversation
+        </p>
+
+        <h1 class="type-h1 mb-8">
+          Let's make something together.
+        </h1>
+
+        <p class="text-muted text-lg leading-relaxed max-w-2xl mb-16">
+          Have a project in mind, looking for a creative partner,
+          or simply want to say hello? We'd love to hear from you.
+          Big ideas, small projects, and unexpected collaborations
+          are all welcome.
+        </p>
+
+        <div class="grid sm:grid-cols-2 gap-x-16 gap-y-12 border-t border-border pt-12">
+
+          <div>
+            <p class="text-xs tracking-[0.2em] uppercase text-accent mb-4">
+              Email
+            </p>
+            <a
+              href="mailto:pardes@markket.place"
+              class="text-lg hover:text-accent transition-colors"
+            >
+              pardes@markket.place
+            </a>
+          </div>
+
+          <div>
+            <p class="text-xs tracking-[0.2em] uppercase text-accent mb-4">
+              Call or text
+            </p>
+            <a
+              href="tel:+18189434961"
+              class="text-lg hover:text-accent transition-colors"
+            >
+              (818) 943-4961
+            </a>
+          </div>
+
+          <div>
+            <p class="text-xs tracking-[0.2em] uppercase text-accent mb-4">
+              Instagram
+            </p>
+            <a
+              href="https://www.instagram.com/pardes.creative.studio"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="text-lg hover:text-accent transition-colors"
+            >
+              @pardes.creative.studio ↗
+            </a>
+          </div>
+
+          <div>
+            <p class="text-xs tracking-[0.2em] uppercase text-accent mb-4">
+              Location
+            </p>
+            <p class="text-lg">
+              North Hollywood<br />
+              Los Angeles, California
+            </p>
+          </div>
+
+        </div>
+
+        <div class="border-t border-border mt-16 pt-8">
+          <p class="text-muted text-sm leading-relaxed">
+            Not sure exactly what you need? That's okay.
+            Tell us what you're thinking and we'll figure it out together.
+          </p>
+        </div>
+
+      </div>
+    </section>
+
+  </main>
+</BaseLayout>
