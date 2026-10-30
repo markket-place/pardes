@@ -49,26 +49,26 @@ export const siteConfig = {
     src: "/og-image.png",
     width: 1200,
     height: 630,
-    alt: "Pardes — art, tradition, and meaning",
+    alt: "Pardes Creative Studio",
   },
 
   navigation: [
     { label: "Home", href: "/" },
-    { label: "Shop", href: "/catalog" },
+    { label: "Services", href: "/catalog" },
     { label: "About", href: "/about" },
   ] satisfies NavItem[],
 
   footerBlurb:
-    "Art and objects inspired by Jewish tradition, Hebrew lettering, and the beauty of everyday life. Thoughtfully designed, made to be lived with.",
+    "~ Creative Services Agency ~",
 
   footerColumns: [
     {
-      heading: "Shop",
+      heading: "Services",
       links: [
-        { label: "All products", href: "/catalog" },
-        { label: "Art prints", href: "/catalog?category=prints" },
-        { label: "Apparel", href: "/catalog?category=apparel" },
-        { label: "Your cart", href: "/cart" },
+        { label: "Catalogue", href: "/catalog" },
+        // { label: "Art prints", href: "/catalog?category=prints" },
+        // { label: "Apparel", href: "/catalog?category=apparel" },
+        // { label: "Your cart", href: "/cart" },
       ],
     },
     {
@@ -109,7 +109,7 @@ export const siteConfig = {
       "shabbat-print",
       "judaica-wall-art",
     ],
-    homepageSolo: "featured-artwork",
+    homepageSolo: "event-photography",
     mobileMenu: "bestseller-print",
   },
 } as const;

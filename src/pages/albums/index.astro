@@ -1,0 +1,29 @@
+---
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import { pageTitle } from "@/config/site";
+---
+
+<BaseLayout
+  title={pageTitle("Private Galleries")}
+  description="Private photography and film galleries by Pardes Creative Studio."
+>
+  <main id="main-content" class="shell min-h-[65vh] flex items-center justify-center">
+    <section class="max-w-xl py-24 text-center">
+      <p class="text-xs tracking-[0.3em] uppercase text-accent mb-8">Pardes Creative Studio</p>
+
+      <h1 class="type-h1 mb-6">Your moments, preserved.</h1>
+
+      <p class="text-muted leading-relaxed mb-10">
+        Private galleries for the people and moments we have the pleasure of capturing.
+      </p>
+
+      <p class="text-sm text-muted">
+        Looking for your album?
+        <br />
+        Use the private link shared with you, or
+        <a href="/contact" class="text-accent underline underline-offset-4">get in touch</a>
+        and we'll help you find it.
+      </p>
+    </section>
+  </main>
+</BaseLayout>

@@ -1,7 +1,7 @@
+
 name: Deploy to Pages
 
 on:
-  # Runs on pull requests
   pull_request:
     branches: ["main"]
     types: [opened, synchronize, reopened]
@@ -9,21 +9,19 @@ on:
   push:
     branches: ["main"]
 
-  # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
 
-# Basic permissions for testing
 permissions:
   contents: read
   pages: write
   id-token: write
 
 env:
-  BUILD_PATH: "." # default value when not using subfolders
+  BUILD_PATH: "."
 
 jobs:
   test:
-    name: build
+    name: Build
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -48,27 +46,30 @@ jobs:
           echo "PUBLIC_URL=https://sell.markket.place" >> .env
         working-directory: ${{ env.BUILD_PATH }}
 
-      - name: Test Build with Astro
-        run: |
-          npm run build
+      - name: Build Astro
+        run: npm run build
         working-directory: ${{ env.BUILD_PATH }}
 
       - name: Test build output
         run: |
           if [ -d "dist" ]; then
-            echo "✅ Build successful - dist folder created"
+            echo "Build successful - dist folder created"
             ls -la dist/
           else
-            echo "❌ Build failed - no dist folder found"
+            echo "Build failed - no dist folder found"
             exit 1
           fi
         working-directory: ${{ env.BUILD_PATH }}
 
       - name: Upload artifact
+        if: github.event_name != 'pull_request'
         uses: actions/upload-pages-artifact@v4
         with:
           path: ${{ env.BUILD_PATH }}/dist/
+
   deploy:
+    name: Deploy
+    if: github.event_name != 'pull_request'
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
@@ -77,4 +78,4 @@ jobs:
     steps:
       - name: Deploy to GitHub Pages
         id: deployment
-        uses: actions/deploy-pages@v4 # Pairs with upload-pages-artifact
+        uses: actions/deploy-pages@v4
