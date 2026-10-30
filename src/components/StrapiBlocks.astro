@@ -1,0 +1,237 @@
+---
+interface TextChild {
+  type?: string;
+  text?: string;
+  bold?: boolean;
+  italic?: boolean;
+  underline?: boolean;
+  strikethrough?: boolean;
+  code?: boolean;
+}
+
+interface Block {
+  type: string;
+  children?: TextChild[];
+  level?: number;
+  format?: string;
+  url?: string;
+  image?: {
+    url?: string;
+    alternativeText?: string;
+    width?: number;
+    height?: number;
+  };
+}
+
+interface Props {
+  content?: Block[] | null;
+  class?: string;
+}
+
+const { content = [], class: className = "" } = Astro.props;
+
+const blocks = Array.isArray(content) ? content : [];
+
+function safeHref(url?: string): string | undefined {
+  if (!url) return undefined;
+
+  const value = url.trim();
+
+  // Allow ordinary relative links, fragments, and common safe URL schemes.
+  if (
+    value.startsWith("/") ||
+    value.startsWith("#") ||
+    value.startsWith("./") ||
+    value.startsWith("../") ||
+    /^(https?:|mailto:|tel:)/i.test(value)
+  ) {
+    return value;
+  }
+
+  return undefined;
+}
+---
+
+{
+  blocks.length > 0 && (
+    <div class:list={["strapi-blocks", className]}>
+      {blocks.map((block, index) => {
+        const children = block.children ?? [];
+
+        switch (block.type) {
+          case "paragraph":
+            if (!children.some((child) => child.text?.trim())) {
+              return null;
+            }
+
+            return (
+              <p>
+                {children.map((child) => {
+                  let text: any = child.text ?? "";
+
+                  if (child.code) text = <code>{text}</code>;
+                  if (child.strikethrough) text = <del>{text}</del>;
+                  if (child.underline) text = <u>{text}</u>;
+                  if (child.italic) text = <em>{text}</em>;
+                  if (child.bold) text = <strong>{text}</strong>;
+
+                  return text;
+                })}
+              </p>
+            );
+
+          case "heading": {
+            const level = Math.min(6, Math.max(1, block.level ?? 2));
+            const Tag = `h${level}`;
+
+            return <Tag>{children.map((child) => child.text ?? "")}</Tag>;
+          }
+
+          case "list": {
+            const ListTag = block.format === "ordered" ? "ol" : "ul";
+
+            return (
+              <ListTag>
+                {children.map((item: any) => (
+                  <li>{(item.children ?? []).map((child: TextChild) => child.text ?? "")}</li>
+                ))}
+              </ListTag>
+            );
+          }
+
+          case "quote":
+            return <blockquote>{children.map((child) => child.text ?? "")}</blockquote>;
+
+          case "code":
+            return (
+              <pre>
+                <code>{children.map((child) => child.text ?? "").join("")}</code>
+              </pre>
+            );
+
+          case "image": {
+            const image = block.image;
+            const src = image?.url;
+
+            return src ? (
+              <figure>
+                <img
+                  src={src}
+                  alt={image?.alternativeText ?? ""}
+                  width={image?.width}
+                  height={image?.height}
+                  loading="lazy"
+                />
+              </figure>
+            ) : null;
+          }
+
+          default:
+            // Gracefully skip unknown block types.
+            return null;
+        }
+      })}
+    </div>
+  )
+}
+
+<style>
+  .strapi-blocks {
+    line-height: 1.8;
+    overflow-wrap: anywhere;
+  }
+
+  .strapi-blocks :global(p) {
+    margin: 0 0 1.25rem;
+  }
+
+  .strapi-blocks :global(h1),
+  .strapi-blocks :global(h2),
+  .strapi-blocks :global(h3),
+  .strapi-blocks :global(h4),
+  .strapi-blocks :global(h5),
+  .strapi-blocks :global(h6) {
+    margin: 2rem 0 0.875rem;
+    font-weight: 600;
+    line-height: 1.25;
+    letter-spacing: -0.025em;
+  }
+
+  .strapi-blocks :global(h1) {
+    font-size: 2.25rem;
+  }
+
+  .strapi-blocks :global(h2) {
+    font-size: 1.875rem;
+  }
+
+  .strapi-blocks :global(h3) {
+    font-size: 1.5rem;
+  }
+
+  .strapi-blocks :global(h4) {
+    font-size: 1.25rem;
+  }
+
+  .strapi-blocks :global(h5) {
+    font-size: 1.125rem;
+  }
+
+  .strapi-blocks :global(h6) {
+    font-size: 1rem;
+  }
+
+  .strapi-blocks :global(a) {
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+
+  .strapi-blocks :global(ul),
+  .strapi-blocks :global(ol) {
+    margin: 0 0 1.25rem;
+    padding-left: 1.5rem;
+  }
+
+  .strapi-blocks :global(ul) {
+    list-style: disc;
+  }
+
+  .strapi-blocks :global(ol) {
+    list-style: decimal;
+  }
+
+  .strapi-blocks :global(li) {
+    margin: 0.35rem 0;
+  }
+
+  .strapi-blocks :global(blockquote) {
+    margin: 1.5rem 0;
+    border-left: 3px solid currentColor;
+    padding-left: 1.25rem;
+    font-style: italic;
+    opacity: 0.85;
+  }
+
+  .strapi-blocks :global(pre) {
+    margin: 1.5rem 0;
+    overflow-x: auto;
+    border-radius: 0.5rem;
+    padding: 1rem;
+    background: rgb(127 127 127 / 10%);
+  }
+
+  .strapi-blocks :global(code) {
+    font-family: monospace;
+  }
+
+  .strapi-blocks :global(figure) {
+    margin: 1.5rem 0;
+  }
+
+  .strapi-blocks :global(img) {
+    display: block;
+    max-width: 100%;
+    height: auto;
+    border-radius: 0.5rem;
+  }
+</style>

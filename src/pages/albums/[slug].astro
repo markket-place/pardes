@@ -1,6 +1,7 @@
 ---
 import BaseLayout from "@/layouts/BaseLayout.astro";
 import { getCollection } from "astro:content";
+import StrapiBlocks from "../../components/StrapiBlocks.astro";
 
 const STRAPI_URL = import.meta.env.PUBLIC_STRAPI_URL;
 
@@ -40,17 +41,44 @@ const mediaItems = Array.isArray(rawMedia)
     ? rawMedia.data
     : [];
 
+function normalizeMedia(entry: any) {
+  if (!entry) return null;
+
+  const item = entry.attributes ? { id: entry.id, ...entry.attributes } : entry;
+
+  const formats = item.formats || {};
+
+  return {
+    id: item.id,
+    url: resolveUrl(item.url),
+    thumbnail: resolveUrl(
+      formats.thumbnail?.url || formats.medium?.url || formats.small?.url || item.url,
+    ),
+    alt: item.alternativeText || item.caption || item.name || title,
+    caption: item.caption || "",
+    mime: item.mime || "",
+  };
+}
+
+const rawCover = album.cover?.data ?? album.cover;
+
+const cover = Array.isArray(rawCover) ? normalizeMedia(rawCover[0]) : normalizeMedia(rawCover);
+
+const descriptionParagraphs = album.description
+  .split(/\n\s*\n/)
+  .map((paragraph: string) => paragraph.trim())
+  .filter(Boolean);
+
 const media = mediaItems
   .map((entry: any) => {
     const item = entry.attributes ? { id: entry.id, ...entry.attributes } : entry;
-
-    const formats = item.formats || {};
+    const formats = item.formats;
 
     return {
       id: item.id,
       url: resolveUrl(item.url),
       thumbnail: resolveUrl(
-        formats.medium?.url || formats.small?.url || formats.thumbnail?.url || item.url,
+        formats.thumbnail?.url || formats.medium?.url || formats.small?.url || item.url,
       ),
       alt: item.alternativeText || item.caption || item.name || album.title,
       caption: item.caption || "",
@@ -59,7 +87,7 @@ const media = mediaItems
   })
   .filter((item: any) => item.url && item.mime.startsWith("image/"));
 
-const title = album.title || "Untitled Album";
+const title = album.title || "Gallery";
 const description = album.description || "";
 
 const seo = album.seo || {};
@@ -83,14 +111,19 @@ const gallerySchema = {
 };
 ---
 
-<BaseLayout title={seo.metaTitle || title} description={pageDescription} image={socialImage}>
+<BaseLayout
+  title={seo.metaTitle || title}
+  description={pageDescription}
+  image={socialImage}
+  includeFooter={false}
+>
   <main id="main-content" class="shell">
     <!-- Breadcrumb -->
     <nav
       class="mono flex gap-2 py-6 text-[0.6875rem] uppercase tracking-[0.05em] text-muted"
       aria-label="Breadcrumb"
     >
-      <a href="/albums" class="link">Albums</a>
+      <a href="/" class="link">Home</a>
       <span aria-hidden="true">/</span>
       <span class="text-ink" aria-current="page">{title}</span>
     </nav>
@@ -105,20 +138,51 @@ const gallerySchema = {
             {title}
           </h1>
         </div>
-
-        {
-          description && (
-            <div class="lg:col-span-4">
-              <p class="type-body max-w-[46ch] text-muted">{description}</p>
-            </div>
-          )
-        }
       </div>
 
       <div class="mono mt-8 text-xs text-muted">
         {media.length} photographs
       </div>
+      <div>
+        {
+          descriptionParagraphs.length > 0 && (
+            <div class="lg:col-span-4 space-y-4">
+              {descriptionParagraphs.map((paragraph: string) => (
+                <p class="type-body max-w-[46ch] text-muted whitespace-pre-line">{paragraph}</p>
+              ))}
+            </div>
+          )
+        }
+      </div>
     </header>
+
+    {
+      cover?.url && (
+        <figure class="mb-12">
+          <img
+            src={cover.url}
+            alt={cover.alt}
+            class="block max-h-[75vh] w-full rounded-lg object-cover"
+            loading="eager"
+            decoding="async"
+          />
+
+          {cover.caption && (
+            <figcaption class="mt-3 text-sm text-muted">{cover.caption}</figcaption>
+          )}
+        </figure>
+      )
+    }
+
+    <div>
+      {
+        album.content?.length > 0 && (
+          <section class="mx-auto my-12 max-w-3xl px-6">
+            <StrapiBlocks content={album.content} />
+          </section>
+        )
+      }
+    </div>
 
     <!-- Masonry Gallery -->
     <section class="columns-1 gap-6 sm:columns-2 lg:columns-3" aria-label={`${title} photographs`}>
