@@ -116,6 +116,7 @@ const gallerySchema = {
   description={pageDescription}
   image={socialImage}
   includeFooter={false}
+  noindex
 >
   <main id="main-content" class="shell">
     <!-- Breadcrumb -->
@@ -382,7 +383,7 @@ const gallerySchema = {
       modal.setAttribute("aria-hidden", "false");
       document.body.style.overflow = "hidden";
 
-      closeButton?.focus();
+      (closeButton as HTMLElement)?.focus();
     }
 
     function closeLightbox() {

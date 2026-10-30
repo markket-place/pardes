@@ -1,70 +1,29 @@
 ---
 import BaseLayout from "@/layouts/BaseLayout.astro";
-import { siteConfig, pageTitle } from "@/config/site";
-
-export async function getStaticPaths() {
-  try {
-    const STRAPI_URL = import.meta.env.PUBLIC_STRAPI_URL || 'https://api.markket.place';
-    const response = await fetch(`${STRAPI_URL}/api/albums?populate=cover`);
-    
-    if (!response.ok) {
-      console.error('Failed to fetch albums:', response.statusText);
-      return [];
-    }
-    
-    const jsonData = await response.json();
-    const albums = Array.isArray(jsonData.data) ? jsonData.data : [jsonData.data];
-    
-    return [{
-      params: {},
-      props: { albums },
-    }];
-  } catch (error) {
-    console.error('Error fetching albums:', error);
-    return [];
-  }
-}
-
-const { albums } = Astro.props;
+import { pageTitle } from "@/config/site";
 ---
 
 <BaseLayout
-  title={pageTitle("Albums")}
-  description="Explore our collection of albums"
+  title={pageTitle("Private Galleries")}
+  description="Private photography and film galleries by Pardes Creative Studio."
 >
-  <main id="main-content" class="shell">
-    <h1 class="type-h1 mb-12">Albums</h1>
+  <main id="main-content" class="shell min-h-[65vh] flex items-center justify-center">
+    <section class="max-w-xl py-24 text-center">
+      <p class="text-xs tracking-[0.3em] uppercase text-accent mb-8">Pardes Creative Studio</p>
 
-    <div class="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3">
-      {
-        albums.map((album) => (
-          <a
-            href={`/albums/${album.attributes.slug}`}
-            class="group block"
-          >
-            <figure class="overflow-hidden rounded-lg bg-surface">
-              {album.attributes.cover?.data?.attributes?.formats?.thumbnail?.url ? (
-                <img
-                  src={album.attributes.cover.data.attributes.formats.thumbnail.url}
-                  alt={album.attributes.title}
-                  class="aspect-[4/3] w-full object-cover transition-transform duration-500 group-hover:scale-105"
-                  loading="lazy"
-                />
-              ) : (
-                <div class="aspect-[4/3] w-full bg-gray-200 flex items-center justify-center">
-                  <span class="text-gray-500">No cover image</span>
-                </div>
-              )}
-            </figure>
-            <h2 class="type-h3 mt-4 group-hover:text-accent transition-colors">
-              {album.attributes.title}
-            </h2>
-            <p class="mt-2 text-muted line-clamp-2">
-              {album.attributes.description.replace(/<[^>]*>/g, '')}
-            </p>
-          </a>
-        ))
-      }
-    </div>
+      <h1 class="type-h1 mb-6">Your moments, preserved.</h1>
+
+      <p class="text-muted leading-relaxed mb-10">
+        Private galleries for the people and moments we have the pleasure of capturing.
+      </p>
+
+      <p class="text-sm text-muted">
+        Looking for your album?
+        <br />
+        Use the private link shared with you, or
+        <a href="/contact" class="text-accent underline underline-offset-4">get in touch</a>
+        and we'll help you find it.
+      </p>
+    </section>
   </main>
 </BaseLayout>
