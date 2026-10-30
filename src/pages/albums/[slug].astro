@@ -52,7 +52,7 @@ function normalizeMedia(entry: any) {
     id: item.id,
     url: resolveUrl(item.url),
     thumbnail: resolveUrl(
-      formats.thumbnail?.url || formats.medium?.url || formats.small?.url || item.url,
+      formats.medium?.url || formats.small?.url || formats.thumbnail?.url || item.url,
     ),
     alt: item.alternativeText || item.caption || item.name || title,
     caption: item.caption || "",
@@ -60,9 +60,7 @@ function normalizeMedia(entry: any) {
   };
 }
 
-const rawCover = album.cover?.data ?? album.cover;
-
-const cover = Array.isArray(rawCover) ? normalizeMedia(rawCover[0]) : normalizeMedia(rawCover);
+const cover = album.cover;
 
 const descriptionParagraphs = album.description
   .split(/\n\s*\n/)
@@ -78,7 +76,7 @@ const media = mediaItems
       id: item.id,
       url: resolveUrl(item.url),
       thumbnail: resolveUrl(
-        formats.thumbnail?.url || formats.medium?.url || formats.small?.url || item.url,
+        formats.medium?.url || formats.thumbnail?.url || formats.small?.url || item.url,
       ),
       alt: item.alternativeText || item.caption || item.name || album.title,
       caption: item.caption || "",
