@@ -4,7 +4,7 @@ import ProductCard from "@/components/ProductCard.astro";
 import BaseLayout from "@/layouts/BaseLayout.astro";
 import heroImg from "@/assets/atelier-hero.jpg";
 import { siteConfig } from "@/config/site";
-import { formatPrice, getProducts, requireProduct } from "@/data/products";
+import { getProducts, requireProduct } from "@/data/products";
 
 const products = await getProducts();
 const featured = siteConfig.featured.homepageGrid.map((slug) => requireProduct(products, slug));
@@ -13,104 +13,187 @@ const solo = requireProduct(products, siteConfig.featured.homepageSolo);
 const siteUrl = (Astro.site ?? new URL(Astro.url.origin)).href;
 
 const facts = [
-  { value: "2018", label: "Founded" },
-  { value: siteConfig.location.region, label: "Sweden" },
-  { value: String(products.length).padStart(2, "0"), label: "Pieces" },
-  { value: "03", label: "Timbers" },
+  { value: "02", label: "Founders" },
+  { value: "LA", label: "Based in" },
+  { value: "∞", label: "Possibilities" },
+  { value: "01", label: "Shared vision" },
 ];
 
-const materials = [
+const disciplines = [
   {
-    name: "European Oak",
-    tag: "Quiet · structural",
-    copy: "A single grade of slow-grown oak from managed forests in southern Sweden. Quarter-sawn for stability.",
+    number: "01",
+    name: "Photography & Film",
+    copy: "Capturing people, places, events, and stories worth sharing.",
   },
   {
-    name: "Curved Ash",
-    tag: "Resilient · sprung",
-    copy: "A small reserve from the south coast, steam-bent over custom forms. Used only where the curve earns it.",
+    number: "02",
+    name: "Digital & Design",
+    copy: "Websites, branding, and digital experiences built with purpose.",
   },
   {
-    name: "American Walnut",
-    tag: "Warm · figured",
-    copy: "Bought in single planks from a family mill in Pennsylvania. The grain decides the piece, not the reverse.",
+    number: "03",
+    name: "Music & Production",
+    copy: "Sound, creative direction, and bringing ideas to life.",
+  },
+  {
+    number: "04",
+    name: "Creative Connections",
+    copy: "Connecting good people, complementary talents, and new opportunities.",
   },
 ];
 
 const organizationSchema = {
   "@context": "https://schema.org",
   "@type": "Organization",
-  name: siteConfig.name,
+  name: "Pardes Creative Studio",
   url: siteUrl,
-  slogan: siteConfig.tagline,
-  email: siteConfig.email,
+  slogan: "Ancient principles. Modern solutions.",
+  email: "pardes@markket.place",
+  telephone: "+18189434961",
   address: {
     "@type": "PostalAddress",
-    addressRegion: siteConfig.location.region,
-    addressCountry: siteConfig.location.country,
+    addressLocality: "North Hollywood",
+    addressRegion: "CA",
+    addressCountry: "US",
   },
+  sameAs: ["https://www.instagram.com/pardes.creative.studio"],
 };
 ---
 
 <BaseLayout
-  title={`${siteConfig.name} — ${siteConfig.tagline}`}
-  description="A small catalogue of seating, tables and storage. Solid oak, ash and walnut, hand-built to order in Småland, Sweden."
+  title="Pardes Creative Studio — Ancient Principles. Modern Solutions."
+  description="Pardes Creative Studio brings together photography, film, music, design, web development, and creative collaboration in Los Angeles."
 >
   <main id="main-content">
-    {/* ---------------------------------------------------------------- Hero */}
-    <section class="shell grid items-center gap-x-12 gap-y-10 pb-4 pt-8 md:grid-cols-12 md:pb-10 md:pt-12">
-      <div class="hero-in md:col-span-5">
-        <h1 class="type-hero">Hand-carved pieces from the northern woods</h1>
-        <p class="type-lead mt-7 max-w-[42ch]">
-          A small, slow catalogue of seating, tables and storage — solid oak, ash and walnut, shaped by hand and
-          built to outlast the room they were made for.
+    <!-- Hero -->
+    <section
+      class="shell grid items-center gap-x-12 gap-y-10 pb-8 pt-12 md:grid-cols-12 md:pb-16 md:pt-24"
+    >
+      <div class="hero-in md:col-span-6">
+        <p class="label mb-8">Independent creative studio · Los Angeles</p>
+
+        <h1 class="type-hero">
+          Ancient principles.<br />
+          Modern solutions.
+        </h1>
+
+        <p class="type-lead mt-7 max-w-[44ch]">
+          We bring together creativity, technology, and meaningful connections to help people and
+          businesses bring their ideas to life.
         </p>
+
         <div class="mt-9 flex flex-wrap gap-3">
-          <a href="/catalog" class="btn btn-primary">Browse the catalogue</a>
-          <a href="/about" class="btn btn-outline">The workshop</a>
+          <a href="/contact" class="btn btn-primary">Start a conversation</a>
+          <a href="/about" class="btn btn-outline">Get to know us</a>
         </div>
       </div>
 
-      <figure class="hero-in md:col-span-7" style="--reveal-delay:120ms">
+      <figure class="hero-in md:col-span-6" style="--reveal-delay:120ms">
         <div class="overflow-hidden bg-surface">
           <Image
             src={heroImg}
-            alt="Hand-carved sculptural walnut lounge chair in a sunlit atelier"
+            alt="Creative work and visual storytelling by Pardes Creative Studio"
             width={1600}
             height={1400}
             format="webp"
             loading="eager"
             decoding="sync"
-            class="parallax aspect-[4/3] w-full object-cover object-right md:aspect-[8/7]"
+            class="parallax aspect-[4/3] w-full object-cover object-center md:aspect-[8/7]"
           />
         </div>
-        <figcaption class="mono mt-3 flex justify-between gap-4 text-[0.625rem] uppercase tracking-[0.05em] text-muted">
-          <span>No. 04 — Arvid Lounge</span>
-          <span>Solid walnut · 2025</span>
+        <figcaption
+          class="mono mt-3 flex justify-between gap-4 text-[0.625rem] uppercase tracking-[0.05em] text-muted"
+        >
+          <span>Ideas into reality</span>
+          <span>North Hollywood · LA</span>
         </figcaption>
       </figure>
     </section>
 
-    {/* Spec band */}
+    <!-- Studio facts -->
     <div class="mt-14 border-y border-line md:mt-20">
       <dl class="shell grid grid-cols-2 md:grid-cols-4">
         {
           facts.map((fact, index) => (
             <div class="fact" data-reveal style={`--reveal-delay:${index * 70}ms`}>
               <dt class="label">{fact.label}</dt>
-              <dd class="mt-2.5 text-2xl font-medium tracking-[-0.03em] md:text-3xl">{fact.value}</dd>
+              <dd class="mt-2.5 text-2xl font-medium tracking-[-0.03em] md:text-3xl">
+                {fact.value}
+              </dd>
             </div>
           ))
         }
       </dl>
     </div>
 
-    {/* --------------------------------------------------- Currently in build */}
+    <!-- Introduction -->
     <section class="shell mt-24 md:mt-36">
       <div class="rule" data-reveal="line"></div>
-      <div class="mt-8 flex flex-wrap items-end justify-between gap-x-8 gap-y-4" data-reveal>
-        <h2 class="type-h2 max-w-[14ch]">A few pieces, close to ready</h2>
-        <a href="/catalog" class="link link-mono pb-1.5 text-muted">All six pieces</a>
+
+      <div class="mt-8 grid gap-10 md:grid-cols-12 md:gap-16">
+        <div class="md:col-span-5" data-reveal>
+          <p class="label mb-6">A different kind of studio</p>
+          <h2 class="type-h2 max-w-[14ch]">Good ideas grow together.</h2>
+        </div>
+
+        <div class="md:col-span-7 md:pt-10" data-reveal>
+          <p class="type-body max-w-[55ch]">
+            Started by Daveed and Sagiv in North Hollywood, Pardes is an independent creative studio
+            built around complementary skills, shared curiosity, and a love for making things.
+          </p>
+
+          <p class="type-body mt-6 max-w-[55ch]">
+            From photography and film to music, websites, and digital experiences, we combine our
+            talents and collaborate with a wider network of creatives and professionals to make
+            projects happen.
+          </p>
+
+          <a href="/about" class="link link-mono mt-8 inline-block text-muted">
+            More about Pardes →
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- Disciplines -->
+    <section class="shell mt-24 md:mt-36">
+      <div class="rule" data-reveal="line"></div>
+
+      <div class="mt-8 flex flex-wrap items-end justify-between gap-6" data-reveal>
+        <div>
+          <p class="label mb-5">What we bring together</p>
+          <h2 class="type-h2 max-w-[16ch]">Many disciplines. One creative vision.</h2>
+        </div>
+      </div>
+
+      <div class="mt-12 grid gap-x-10 gap-y-12 sm:grid-cols-2 md:mt-16">
+        {
+          disciplines.map((discipline, index) => (
+            <article
+              class="border-t border-line pt-6"
+              data-reveal
+              style={`--reveal-delay:${index * 90}ms`}
+            >
+              <span class="mono text-xs text-accent">{discipline.number}</span>
+              <h3 class="type-h3 mt-4">{discipline.name}</h3>
+              <p class="type-body mt-4 max-w-[38ch] text-[0.9375rem]">{discipline.copy}</p>
+            </article>
+          ))
+        }
+      </div>
+    </section>
+
+    <!-- Featured work / existing products -->
+    <section class="shell mt-24 md:mt-36">
+      <div class="rule" data-reveal="line"></div>
+
+      <div class="mt-8 flex flex-wrap items-end justify-between gap-6" data-reveal>
+        <div>
+          <p class="label mb-5">Selected work</p>
+          <h2 class="type-h2 max-w-[14ch]">Things we've been creating.</h2>
+        </div>
+
+        <a href="/catalog" class="link link-mono pb-1.5 text-muted">Explore the collection</a>
       </div>
 
       <div class="mt-12 grid gap-x-8 gap-y-14 md:mt-14 md:grid-cols-3">
@@ -122,7 +205,7 @@ const organizationSchema = {
       </div>
     </section>
 
-    {/* ------------------------------------------------------------- The solo */}
+    <!-- Featured individual project -->
     <section class="mt-24 md:mt-36">
       <div class="shell grid items-center gap-10 md:grid-cols-12 md:gap-12">
         <div class="md:col-span-7 lg:col-span-8">
@@ -132,12 +215,10 @@ const organizationSchema = {
             data-reveal="mask"
             aria-label={`${solo.name} — ${solo.shortDescription}`}
           >
-            {/* Wrapper carries the unmask clip so the image keeps its own
-                hover transition — see the mask notes in src/styles.css. */}
             <div>
               <Image
                 src={solo.images[0]}
-                alt=""
+                alt={solo.name}
                 width={1600}
                 height={1100}
                 loading="lazy"
@@ -149,48 +230,62 @@ const organizationSchema = {
         </div>
 
         <div class="md:col-span-5 lg:col-span-4" data-reveal style="--reveal-delay:140ms">
-          <h2 class="type-h2">One plank, no hardware</h2>
-          <p class="type-body mt-6 max-w-[44ch]">{solo.description}</p>
+          <p class="label mb-5">A closer look</p>
+          <h2 class="type-h2">Thoughtful work, made with purpose.</h2>
 
-          <dl class="mono mt-9 border-t border-line text-[0.8125rem]">
-            {
-              [
-                ["Dimensions", solo.dimensions],
-                ["Finish", solo.finish],
-                ["Lead time", solo.leadTime],
-                ["From", formatPrice(solo.price)],
-              ].map(([term, value]) => (
-                <div class="flex justify-between gap-6 border-b border-line py-3">
-                  <dt class="text-muted">{term}</dt>
-                  <dd class="text-right">{value}</dd>
-                </div>
-              ))
-            }
-          </dl>
+          <p class="type-body mt-6 max-w-[44ch]">
+            Every project has its own character. We believe in thoughtful details, intentional
+            choices, and creating things that have a reason to exist.
+          </p>
 
-          <a href={`/products/${solo.slug}`} class="btn btn-primary mt-9">See the piece</a>
+          <a href={`/products/${solo.slug}`} class="btn btn-primary mt-9">Explore the project</a>
         </div>
       </div>
     </section>
 
-    {/* ----------------------------------------------------------- Materials */}
+    <!-- Philosophy -->
     <section class="shell mt-24 md:mt-36">
       <div class="rule" data-reveal="line"></div>
-      <h2 class="type-h2 mt-8 max-w-[18ch]" data-reveal>We've spent years learning three timbers</h2>
 
-      <div class="mt-12 grid gap-x-8 gap-y-12 md:grid-cols-3">
-        {
-          materials.map((material, index) => (
-            <div class="border-t border-line pt-6" data-reveal style={`--reveal-delay:${index * 110}ms`}>
-              <h3 class="type-h3">{material.name}</h3>
-              <p class="label mt-3">{material.tag}</p>
-              <p class="type-body mt-4 text-[0.9375rem]">{material.copy}</p>
-            </div>
-          ))
-        }
+      <div class="grid gap-10 py-10 md:grid-cols-12 md:gap-16 md:py-16">
+        <div class="md:col-span-5" data-reveal>
+          <p class="label mb-6">Beyond the deliverable</p>
+          <h2 class="type-h2">Better work through better connections.</h2>
+        </div>
+
+        <div class="md:col-span-7 space-y-6 md:pt-10" data-reveal>
+          <p class="type-body">
+            We believe a good creative studio should be more than the sum of its services. Our goal
+            is to help local businesses, independent creators, and organizations grow.
+          </p>
+
+          <p class="type-body">
+            Sometimes we do that directly. Sometimes it's an introduction to a photographer,
+            designer, musician, printer, developer, or another professional who is just right for
+            the job.
+          </p>
+
+          <p class="type-body">
+            Whether it's a simple set of portraits or an elaborate production, we enjoy finding the
+            right people, sharing ideas, and making good things happen together.
+          </p>
+        </div>
       </div>
+    </section>
+
+    <!-- CTA -->
+    <section class="shell mt-24 border-t border-line py-24 text-center md:mt-36 md:py-36">
+      <p class="label mb-6">Have something in mind?</p>
+
+      <h2 class="type-h1 mx-auto mb-8 max-w-2xl">Let's create something meaningful.</h2>
+
+      <p class="type-body mx-auto mb-10 max-w-xl">
+        Have a project, an idea, or simply want to connect? We'd love to hear from you.
+      </p>
+
+      <a href="/contact" class="btn btn-primary">Get in touch</a>
     </section>
   </main>
 
-  <script is:inline type="application/ld+json" set:html={JSON.stringify(organizationSchema)}></script>
+  <script is:inline type="application/ld+json" set:html={JSON.stringify(organizationSchema)} />
 </BaseLayout>
